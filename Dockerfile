@@ -3,7 +3,7 @@
 FROM ubuntu:14.04
 MAINTAINER Renan Gomes
 
-ENV PHANTOMJS_VERSION 2.1.1
+ENV PHANTOMJS_VERSION master
 
 #prereqs
 RUN apt-get -yqq update && \
