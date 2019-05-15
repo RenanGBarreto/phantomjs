@@ -330,6 +330,22 @@ class PhantomJSBuilder(object):
         if self.qmake("src/qt/qtwebkit", configureOptions) != 0:
             raise RuntimeError("Configuration of Qt WebKit failed.")
 
+        # Hack that solves the issue with 'unsafe-eval'
+        filename = "src/qt/qtwebkit/Source/WebCore/page/ContentSecurityPolicy.cpp"
+
+        # Safely read the input filename using 'with'
+        with open(filename) as f:
+            s = f.read()
+
+        # Safely write the changed content, if found in the file
+        with open(filename, 'w') as f:
+            print('Changing ", m_allowEval(false)" to ", m_allowEval(true)"')
+            s = s.replace(", m_allowEval(false)", ", m_allowEval(true)")
+
+            print('Changing ", m_allowInline(false)" to ", m_allowInline(true)"')
+            s = s.replace(", m_allowInline(false)", ", m_allowInline(false)")
+            f.write(s)
+
         print("building Qt WebKit, please wait...")
         if self.make("src/qt/qtwebkit") != 0:
             raise RuntimeError("Building Qt WebKit failed.")
